@@ -1,0 +1,52 @@
+.fullscreen-main {
+  margin: 0 auto;
+  width: 100vw;
+  height: 100vh;
+  overflow-y: auto;
+  /* Optionally, you can set other styles like background color, padding, etc. */
+  background-color: #EAE0D5;
+}
+
+.client-form,
+.sub-form {
+  margin: 0 auto;
+  margin-block: 5%;
+  padding-block: 5%;
+  padding-inline: 5%;
+  background-color: #C6AC8F;
+  width: 20%;
+  max-width: 100%;
+  border: 2px solid #0A0908;
+  border-radius: 16px;
+
+}
+
+#my-helper-text {
+  color: #EAE0D5
+}
+
+#buttonS {
+  background-color: #22333B;
+}
+
+.client-form input {
+  border-color: #ccc;
+}
+
+.client-form input:valid {
+  border-color: green;
+}
+
+.client-form input:invalid {
+  border-color: red;
+}
+
+.dataGrid {
+  margin: 0 auto;
+  max-width: 70%;
+  justify-content: space-around;
+  align-content: space-between;
+  border: 2px solid #0A0908;
+  background-color: #C6AC8F;
+
+}
