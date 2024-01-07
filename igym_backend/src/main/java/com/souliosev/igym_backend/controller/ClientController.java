@@ -18,8 +18,13 @@ public class ClientController {
 
     @GetMapping
     public ResponseEntity<List<Client>> getAllClients() {
-        List<Client> clients = clientService.getAll();
-        return new ResponseEntity<>(clients, HttpStatus.OK);
+        try {
+            List<Client> clients = clientService.getAll();
+            return new ResponseEntity<>(clients, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/create")
@@ -33,14 +38,26 @@ public class ClientController {
     }
 
     @DeleteMapping("/{clientId}")
-    public void delete(@PathVariable Long clientId){
-        clientService.delete(clientId);
+    public ResponseEntity<Boolean> delete(@PathVariable Long clientId){
+        try{
+            clientService.delete(clientId);
+            return ResponseEntity.ok(true);
+        }
+        catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/update/{clientId}")
     public ResponseEntity<Client> update(@RequestBody Client client){
-        clientService.update(client);
-        return new ResponseEntity<>(client, HttpStatus.OK);
+        try {
+            clientService.update(client);
+            return new ResponseEntity<>(client, HttpStatus.OK);
+
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

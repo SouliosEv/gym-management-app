@@ -3,12 +3,7 @@ package com.souliosev.igym_backend.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 import jakarta.persistence.Id;
-
-import java.util.Date;
-
-
 @Getter
 @Setter
 @Entity

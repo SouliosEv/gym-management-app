@@ -18,24 +18,45 @@ public class SubscriptionController {
     private SubscriptionService subscriptionService;
 
     @GetMapping
-    public List<Subscription> getAll() {
-        return subscriptionService.getAll();
+    public ResponseEntity<List<Subscription>> getAll() {
+        try{
+            List<Subscription> subscriptions = subscriptionService.getAll();
+            return new ResponseEntity<>(subscriptions, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/create")
     public ResponseEntity<Subscription> create(@RequestBody Subscription subscription){
-        Subscription newSubscription = subscriptionService.create(subscription);
-        return new ResponseEntity<>(newSubscription, HttpStatus.OK);
+        try{
+            Subscription newSubscription = subscriptionService.create(subscription);
+            return new ResponseEntity<>(newSubscription, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @DeleteMapping("/{subId}")
-    public void delete(@PathVariable Long subId){
-        subscriptionService.delete(subId);
+    public ResponseEntity<Boolean> delete(@PathVariable Long subId){
+        try {
+            subscriptionService.delete(subId);
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {//SubscriptionNotFoundException custom exception better approach
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/update/{subId}")
     public ResponseEntity<Subscription> update(@RequestBody Subscription subscription){
-        subscriptionService.update(subscription);
-        return new ResponseEntity<>(subscription, HttpStatus.OK);
+        try {
+            subscriptionService.update(subscription);
+            return new ResponseEntity<>(subscription, HttpStatus.OK);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

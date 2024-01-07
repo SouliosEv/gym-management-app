@@ -5,7 +5,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
+//this class enables spring to interact with other front-end frameworks like react
 @Configuration(proxyBeanMethods = false)
 @EnableWebMvc
 public class CorsConfig implements WebMvcConfigurer {

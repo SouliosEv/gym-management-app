@@ -4,7 +4,6 @@ import '../App.css'
 import ResponsiveAppBar from '../partials/ResponsiveAppBar.jsx';
 import UsefulButtons from '../partials/UsefulButtons';
 
-
 function Register() {
     return (
         <>

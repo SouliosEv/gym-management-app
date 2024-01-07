@@ -1,89 +1,118 @@
 package com.souliosev.igym_backend;
 
+import com.souliosev.igym_backend.controller.ClientController;
 import com.souliosev.igym_backend.model.Client;
-import com.souliosev.igym_backend.service.ClientService;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest
+@AutoConfigureMockMvc
 class IgymBackendApplicationTests {
 
 	@MockBean
-	private ClientService clientService;
-
-
+	private ClientController clientController;
 	@Autowired
 	private MockMvc mockMvc;
-
-	@Autowired
-	private WebApplicationContext webApplicationContext;
-	@Before
-	public void setUp() {
-		this.mockMvc = webAppContextSetup(webApplicationContext).build();
-
-	}
 
 	@Test
 	public void testGetAllClients() throws Exception {
 		Client client1 = new Client();
-		client1.setClientId(1L);
-		client1.setName("client 1");
-		client1.setEmail("client1@gmail.com");
-		client1.setMobileNumber("6999999999");
-		client1.setCreatedAt(LocalDateTime.now());
-		client1.setUpdatedAt(LocalDateTime.now());
 		Client client2 = new Client();
-		client2.setClientId(2L);
-		client2.setName("client 2");
-		client2.setEmail("client1@gmail.com");
-		client2.setMobileNumber("6999999999");
-		client2.setCreatedAt(LocalDateTime.now());
-		client2.setUpdatedAt(LocalDateTime.now());
 
-		// Arrange
 		List<Client> mockClients = new ArrayList<Client>();
 		mockClients.add(client1);
 		mockClients.add(client2);
-		System.out.println(mockClients.get(0).getClientId());
-		when(clientService.getAll()).thenReturn(mockClients);
+		when(clientController.getAllClients()).thenReturn(new ResponseEntity<>(mockClients, HttpStatus.OK));//???
 
-		// Act
 		mockMvc.perform(get("/clients"))
 				.andExpect(status().isOk())
-				.andExpect((ResultMatcher) content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect((ResultMatcher) jsonPath("$", hasSize(2)))
-				.andExpect(MockMvcResultMatchers.request().asyncResult(clientService.getAll()));
+				.andExpect( content().contentType("application/json"))
+				.andExpect( jsonPath("$", hasSize(2)));
 
-        // Assert
-		verify(clientService, times(1)).getAll();
+		verify(clientController, times(1)).getAllClients();
 	}
 
+	@Test
+	public void testDeleteClient() throws Exception {
+		Long clientId = 1L;
+		doReturn(ResponseEntity.ok(true)).when(clientController).delete(clientId);
+		mockMvc.perform(delete("/clients/{clientId}", clientId))
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$").value(true));
+
+		verify(clientController).delete(clientId);
+	}
+
+	@Test
+	public void testCreateClient() throws Exception{
+		Client client = new Client();
+		client.setClientId(2L);
+		client.setName("Paddy Pimblett");
+		client.setEmail("paddyTheBuddy@gmail.com");
+		client.setMobileNumber("6919235912");
+		String jsonPayload = new ObjectMapper().writeValueAsString(client);
+
+
+		when(clientController.create(client)).thenReturn(new ResponseEntity<>(client,HttpStatus.CREATED));
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.post("/clients/create")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(jsonPayload);
+
+		ResultActions resultActions = mockMvc.perform(builder).andDo(print())
+				.andExpect(status().isCreated())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.name").value(client.getName()))
+				.andExpect(jsonPath("$.email").value(client.getEmail()));
+
+		verify(clientController).create(client);
+
+	}
+
+	@Test
+	public void testUpdateClient() throws Exception {
+		Client updatedClient = new Client();
+		updatedClient.setClientId(2L);
+		updatedClient.setName("Updated Paddy Pimblett");
+		updatedClient.setEmail("updatedPaddyTheBuddy@gmail.com");
+		updatedClient.setMobileNumber("2222222222");
+		String updatePayload = new ObjectMapper().writeValueAsString(updatedClient);
+
+		when(clientController.update(updatedClient)).thenReturn(new ResponseEntity<>(updatedClient,HttpStatus.OK));
+
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.put("/clients/update/2")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content(updatePayload);
+
+		ResultActions resultActions = mockMvc.perform(builder).andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+				.andExpect(jsonPath("$.name").value(updatedClient.getName()))
+				.andExpect(jsonPath("$.email").value(updatedClient.getEmail()));
+
+		verify(clientController).update(updatedClient);
+	}
 }

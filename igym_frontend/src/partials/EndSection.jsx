@@ -12,8 +12,9 @@ function EndSection() {
             marginTop: "15%",
             position: "relative",
             maxWidth: "70%",
+            color: "#22333B",
         }} >
-            < Grid item xs={12} sx={{ marginTop: "2%" }}>
+            < Grid item xs={12} sx={{ marginTop: "2%", }}>
                 <Typography variant="body2">Select a client , double click to edit the desired field press enter to finish editing and the save button will make the changes take effect.   </Typography>
             </Grid>
             < Grid item xs={12} sx={{ marginTop: "1%" }}>
@@ -25,8 +26,5 @@ function EndSection() {
 
         </Grid >
     )
-
 }
-
-
 export default EndSection;

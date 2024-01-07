@@ -26,32 +26,23 @@ function ClientsData() {
         fetchData();
     }, []);
 
-
-
-
-
     const columns = [
         { field: 'clientId', headerName: 'ClientID', width: 150, readOnly: true },
         {
             field: 'name', headerName: 'Name', editable: true, width: 350,
         },
-        { field: 'email', headerName: 'Email', width: 400 },
-        { field: 'mobileNumber', headerName: 'Mobile number', width: 350 },
+        { field: 'email', headerName: 'Email', editable: true, width: 400 },
+        { field: 'mobileNumber', headerName: 'Mobile number', editable: true, width: 350 },
     ]
 
     return (
         <Box className='dataGrid'>
             <DataGrid
-                onCellEditStart={(params, event) => {
-                    setUpdatedClient(params);
-                }}
                 onCellEditStop={(params, event) => {
-                    params.row.name = event.target.value;
-                    console.log(params.row)
-                    setUpdatedClient(params.row)
+                    const newClient = params.row;
+                    newClient[params.field] = event.target.value;
+                    setUpdatedClient(newClient)
                 }}
-
-
                 rows={clients}
                 columns={columns}
                 getRowId={row => row.clientId}
@@ -66,11 +57,11 @@ function ClientsData() {
                 checkboxSelection
                 disableRowSelectionOnClick
                 onRowSelectionModelChange={(params, event) => {
+                    console.log("heere")
                     if (params.length === 0) { setSelectedRowId(-1) } else {
                         setSelectedRowId(params[0])//only the first selection counts-.-
                         //i need to allow only 1 selection at a time!
                     }
-
                 }}
             />
             <Button disabled={selectedRowId < 0} onClick={(event) => {//async await
@@ -87,7 +78,6 @@ function ClientsData() {
                 {<SaveIcon />}
             </Button>
             <Button disabled={selectedRowId < 0} onClick={(event) => {
-                console.log(row.isRowSelected)
                 axios.delete('http://localhost:8080/clients/' + selectedRowId)
                     .then(() => {
                         fetchData();
@@ -101,11 +91,6 @@ function ClientsData() {
             </Button>
         </Box>
     );
-
-
-
 }
-
-
 
 export default ClientsData;

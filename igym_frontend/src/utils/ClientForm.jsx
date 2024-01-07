@@ -5,7 +5,6 @@ import Box from '@mui/material/Box';
 import axios from 'axios';
 import '../App.css'
 
-
 const ClientForm = () => {
     const [email, setEmail] = useState('');
     const [mobileNumber, setMobileNumber] = useState('');

@@ -5,7 +5,6 @@ import ResponsiveAppBar from '../partials/ResponsiveAppBar';
 import UsefulButtons from '../partials/UsefulButtons';
 import EndSection from '../partials/EndSection';
 
-
 function Clients() {
     return (
         <>

@@ -18,8 +18,6 @@ function SubscriptionsData() {
         return updatedSub;
     };
 
-
-
     const columns = [
         { field: 'subId', headerName: 'Sub ID', width: 150 },
         { field: 'name', headerName: 'Name', width: 300 },

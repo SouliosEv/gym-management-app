@@ -73,9 +73,6 @@ const SubscriptionForm = () => {
         setClient(selectedClient);
     };
 
-
-
-
     return (
         <Box className="sub-form">
             <Grid container spacing={2} >
